@@ -13,7 +13,7 @@ This repository contains the implementation of various image denoising and enhan
 - [Acknowledgments](#acknowledgments)
 
 ## Features
-- Implementation of AI-based denoising using pre-trained models.
+- Implementation of AI-based denoising using U-net Neural Network model. From [here](https://github.com/JavierGurrola/RDUNet) 
 - Application of median and bilateral filters for traditional denoising.
 - Edge enhancement using Laplacian filters.
 - Evaluation metrics including spatial signal-to-noise ratio and edge strength.
@@ -34,20 +34,20 @@ To get a local copy of this project up and running, follow these steps:
    cd C:/type/path/here
    git clone https://github.com/gauravnirmalkumar/AIDenoisingAndEdgeEnhancement.git
    cd AIDenoisingAndEdgeEnhancement
-
+   ```
 2. **Set up a virtual environment:** (Recommended: [Anaconda](https://www.anaconda.com/))
    ```bash
    conda create --name myenv
    conda activate myenv
-
+   ```
 3. **Install the required packages:**
    ```bash
    pip install -r requirements.txt
-
 ## Usage
 To run the main script, use the following command:
+   ```bash
    python main.py
-
+   ```
 ### Input
 The input for the program should be a 12-bit RAW image file located in the data/ directory.
 
@@ -55,7 +55,7 @@ The input for the program should be a 12-bit RAW image file located in the data/
 The denoised output will be saved in the output/ directory in 24-bit RGB format.
 
 ### Pre-trained Model
-You can find the pre-trained model [here]([url](https://drive.google.com/drive/folders/1jF8YF-7SoVpc4y39_lFl25OBFVQmZAWJ)) (model_color.pth file). Download the model and place it in the model_color/ directory for use in the denoising process.
+You can find the pre-trained model [here]([url](https://drive.google.com/drive/folders/1jF8YF-7SoVpc4y39_lFl25OBFVQmZAWJ)) (model_color.pth file). Download the model_color.pth file and place it in the model_color/ directory for use in the denoising process.
 
 ## Results
 ### Denoising Example
@@ -78,6 +78,7 @@ Below are some examples of the denoising results achieved with this project.
 This project is licensed under the MIT License.
 
 ## Acknowledgments
+
 [OpenCV Documentation](https://opencv.org/)
 [PyTorch Documentation](https://pytorch.org/)
 
