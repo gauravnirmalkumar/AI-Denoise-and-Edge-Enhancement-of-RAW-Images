@@ -30,43 +30,56 @@ This repository contains the implementation of various image denoising and enhan
 To get a local copy of this project up and running, follow these steps:
 
 1. **Clone the repository:**
-   ```
+   ```bash
    git clone https://github.com/gauravnirmalkumar/AIDenoisingAndEdgeEnhancement.git
-   cd AIDenoisingAndEdgeEnhancement
-   
-Set up a virtual environment:
-python -m venv env
-source env/bin/activate  # On Windows use `env\Scripts\activate`
+   cd YourRepoName
 
-Install the required packages:
-pip install -r requirements.txt
+2. **Set up a virtual environment:** (Recommended: [Anaconda](https://www.anaconda.com/))
+   ```bash
+   conda create --name myenv
+   conda activate myenv
 
+3. **Install the required packages:**
+   ```bash
+   pip install -r requirements.txt
+
+## Usage
 To run the main script, use the following command:
-python main.py
+   python main.py
 
-Input
+# Input
 The input for the program should be a 12-bit RAW image file located in the data/ directory.
 
-Output
+# Output
 The denoised output will be saved in the output/ directory in 24-bit RGB format.
 
-Pre-trained Model
-You can find the pre-trained model here. Download the model and place it in the appropriate directory for use in the denoising process.
+# Pre-trained Model
+You can find the pre-trained model here. Download the model and place it in the model_color directory for use in the denoising process.
 
-Results
-Denoising Example
+## Results
+# Denoising Example
 Below are some examples of the denoising results achieved with this project.
 
 AI denoised image:
+![AI_denoised_24bit](https://github.com/user-attachments/assets/3a34ed64-3c89-4483-9d01-6aea6f8657ec)
 
 Commonly Used Algorithms
-Bilateral filter:Gaussian filter (Implemented in Assignment 1):Median filter:
+Bilateral filter:
+![bilateral_filtered](https://github.com/user-attachments/assets/418f06bc-b308-44db-9e3d-3f2f074a3998)
 
-License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+Gaussian filter (Implemented in Assignment 1):
+![gaussian_filtered](https://github.com/user-attachments/assets/2282ab21-2753-4f7b-853a-d548009f07c8)
 
-Acknowledgments
-OpenCV Documentation
-PyTorch Documentation
-Special thanks to the contributors and anyone who has provided feedback on this project.
+Median filter:
+![median_filtered](https://github.com/user-attachments/assets/7c123fc1-935f-4cb5-b88c-bf85a4610ec3)
 
+## License
+This project is licensed under the MIT License.
+
+## Acknowledgments
+[OpenCV Documentation](https://opencv.org/)
+[PyTorch Documentation](https://pytorch.org/)
+
+Special thanks to the contributors, and anyone who has provided feedback on this project.
+
+Thanks for taking your time to get to the end :D
