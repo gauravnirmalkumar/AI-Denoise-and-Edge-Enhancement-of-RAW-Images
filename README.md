@@ -32,7 +32,7 @@ To get a local copy of this project up and running, follow these steps:
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/gauravnirmalkumar/AIDenoisingAndEdgeEnhancement.git
-   cd YourRepoName
+   cd AIDenoisingAndEdgeEnhancement
 
 2. **Set up a virtual environment:** (Recommended: [Anaconda](https://www.anaconda.com/))
    ```bash
@@ -54,7 +54,7 @@ The input for the program should be a 12-bit RAW image file located in the data/
 The denoised output will be saved in the output/ directory in 24-bit RGB format.
 
 ### Pre-trained Model
-You can find the pre-trained model here. Download the model and place it in the model_color directory for use in the denoising process.
+You can find the pre-trained model [here]([url](https://drive.google.com/drive/folders/1jF8YF-7SoVpc4y39_lFl25OBFVQmZAWJ)) (model_color.pth file). Download the model and place it in the model_color/ directory for use in the denoising process.
 
 ## Results
 ### Denoising Example
