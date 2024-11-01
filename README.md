@@ -55,7 +55,7 @@ The input for the program should be a 12-bit RAW image file located in the data/
 The denoised output will be saved in the output/ directory in 24-bit RGB format.
 
 ### Pre-trained Model
-You can find the pre-trained model [here]([url](https://drive.google.com/drive/folders/1jF8YF-7SoVpc4y39_lFl25OBFVQmZAWJ)) (model_color.pth file). Download the model_color.pth file and place it in the model_color/ directory for use in the denoising process.
+You can find the pre-trained model [here](https://drive.google.com/drive/folders/1jF8YF-7SoVpc4y39_lFl25OBFVQmZAWJ) (model_color.pth). Download the model_color.pth file and place it in the model_color/ directory for use in the denoising process.
 
 ## Results
 ### Denoising Example
