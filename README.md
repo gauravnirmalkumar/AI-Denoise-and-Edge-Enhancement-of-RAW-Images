@@ -31,25 +31,19 @@ To get a local copy of this project up and running, follow these steps:
 
 1. **Clone the repository:**
    ```
-   git clone https://github.com/yourusername/YourRepoName.git
-   cd YourRepoName
+   git clone https://github.com/gauravnirmalkumar/AIDenoisingAndEdgeEnhancement.git
+   cd AIDenoisingAndEdgeEnhancement
+   
 Set up a virtual environment:
-
-
-
 python -m venv env
 source env/bin/activate  # On Windows use `env\Scripts\activate`
+
 Install the required packages:
-
-
-
 pip install -r requirements.txt
-Usage
+
 To run the main script, use the following command:
-
-
-
 python main.py
+
 Input
 The input for the program should be a 12-bit RAW image file located in the data/ directory.
 
