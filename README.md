@@ -31,6 +31,7 @@ To get a local copy of this project up and running, follow these steps:
 
 1. **Clone the repository:**
    ```bash
+   cd C:/type/path/here
    git clone https://github.com/gauravnirmalkumar/AIDenoisingAndEdgeEnhancement.git
    cd AIDenoisingAndEdgeEnhancement
 
