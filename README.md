@@ -77,6 +77,20 @@ Below are some examples of the denoising results achieved with this project.
 ## License
 This project is licensed under the MIT License.
 
+## Citation ### (AI U-Net for Image Denoising)
+```
+@article{gurrola2021residual,
+  title={A Residual Dense U-Net Neural Network for Image Denoising},
+  author={Gurrola-Ramos, Javier and Dalmau, Oscar and Alarcón, Teresa E},
+  journal={IEEE Access},
+  volume={9},
+  pages={31742--31754},
+  year={2021},
+  publisher={IEEE},
+  doi={10.1109/ACCESS.2021.3061062}
+}
+```
+
 ## Acknowledgments
 
 [OpenCV Documentation](https://opencv.org/)
