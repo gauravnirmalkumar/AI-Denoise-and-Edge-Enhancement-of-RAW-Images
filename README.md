@@ -77,7 +77,7 @@ Below are some examples of the denoising results achieved with this project.
 ## License
 This project is licensed under the MIT License.
 
-## Citation ### (AI U-Net for Image Denoising)
+## Citation (AI U-Net for Image Denoising)
 ```
 @article{gurrola2021residual,
   title={A Residual Dense U-Net Neural Network for Image Denoising},
