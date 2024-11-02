@@ -61,7 +61,7 @@ You can find the pre-trained model [here](https://drive.google.com/drive/folders
 ### Denoising Example
 Below are some examples of the denoising results achieved with this project.
 
-#### AI denoised image from [here](https://github.com/JavierGurrola/RDUNet):
+#### AI denoised image using [RDUNet](https://github.com/JavierGurrola/RDUNet):
 ![AI_denoised_24bit](https://github.com/user-attachments/assets/3a34ed64-3c89-4483-9d01-6aea6f8657ec)
 
 #### Commonly Used Algorithms
