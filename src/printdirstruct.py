@@ -12,6 +12,6 @@ def print_directory_structure(root_dir, output_file):
 
 if __name__ == "__main__":
     root_directory = "D:\\assignment2"  # Replace with your directory path
-    output_file_path = "directory_structure.txt"
+    output_file_path = "D:\\assignment2\\directory_structure.txt"
     print_directory_structure(root_directory, output_file_path)
     print(f"Directory structure has been saved to {output_file_path}")
