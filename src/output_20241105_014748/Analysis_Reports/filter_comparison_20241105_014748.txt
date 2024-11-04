@@ -1,0 +1,32 @@
+Filter Comparison Report
+
+Filter: AI_Denoised
+PSNR: 40.06 dB
+SNR: 30.02 dB
+Edge Strength Original: 261.88
+Edge Strength Processed: 159.42
+
+Filter: Bilateral
+PSNR: 37.92 dB
+SNR: 27.88 dB
+Edge Strength Original: 261.88
+Edge Strength Processed: 145.96
+
+Filter: Median
+PSNR: 42.31 dB
+SNR: 32.26 dB
+Edge Strength Original: 261.88
+Edge Strength Processed: 211.09
+
+Filter: Gaussian
+PSNR: 38.98 dB
+SNR: 28.94 dB
+Edge Strength Original: 261.88
+Edge Strength Processed: 178.64
+
+Filter: Laplacian
+PSNR: 28.39 dB
+SNR: 18.35 dB
+Edge Strength Original: 261.88
+Edge Strength Processed: 477.54
+

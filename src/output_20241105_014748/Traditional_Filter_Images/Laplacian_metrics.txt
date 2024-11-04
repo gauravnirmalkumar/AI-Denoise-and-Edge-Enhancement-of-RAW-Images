@@ -1,0 +1,5 @@
+Filter: Laplacian
+PSNR: 28.390968000432345
+SNR: 18.348354
+Edge Strength Original: 261.87627656592844
+Edge Strength Processed: 477.53697260089757

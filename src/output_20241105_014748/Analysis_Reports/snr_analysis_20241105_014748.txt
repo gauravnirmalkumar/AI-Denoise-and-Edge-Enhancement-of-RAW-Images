@@ -1,0 +1,154 @@
+Detailed Gray Tone SNR Analysis Report
+Generated: 20241105_014748
+==================================================
+
+Method              White SNR      Gray SNR       Black SNR      Average SNR
+-----------------------------------------------------------------
+Original                     35.88          18.64           6.32          20.28
+AI_Denoised                  37.24          18.65           6.28          20.72
+Bilateral                    36.82          18.96           6.47          20.75
+Median                       36.68          18.67           6.34          20.57
+Gaussian                     36.97          18.83           6.50          20.77
+Laplacian                    31.79          17.93           5.86          18.53
+
+Analysis Summary
+--------------------
+Best performing method: Gaussian
+Best average SNR: 20.77 dB
+
+
+Detailed Metrics by Region
+==================================================
+
+Original:
+--------------------
+White:
+  SNR: 35.88 dB
+  Mean: 136.16
+  Std Dev: 2.19
+  Min: 120.00
+  Max: 141.00
+Gray:
+  SNR: 18.64 dB
+  Mean: 100.36
+  Std Dev: 11.74
+  Min: 81.00
+  Max: 119.00
+Black:
+  SNR: 6.32 dB
+  Mean: 69.07
+  Std Dev: 33.38
+  Min: 18.00
+  Max: 116.00
+
+AI_Denoised:
+--------------------
+White:
+  SNR: 37.24 dB
+  Mean: 135.37
+  Std Dev: 1.86
+  Min: 123.00
+  Max: 137.00
+Gray:
+  SNR: 18.65 dB
+  Mean: 99.77
+  Std Dev: 11.66
+  Min: 83.00
+  Max: 114.00
+Black:
+  SNR: 6.28 dB
+  Mean: 68.60
+  Std Dev: 33.29
+  Min: 24.00
+  Max: 111.00
+
+Bilateral:
+--------------------
+White:
+  SNR: 36.82 dB
+  Mean: 135.94
+  Std Dev: 1.96
+  Min: 125.00
+  Max: 138.00
+Gray:
+  SNR: 18.96 dB
+  Mean: 100.35
+  Std Dev: 11.32
+  Min: 83.00
+  Max: 115.00
+Black:
+  SNR: 6.47 dB
+  Mean: 69.08
+  Std Dev: 32.80
+  Min: 24.00
+  Max: 112.00
+
+Median:
+--------------------
+White:
+  SNR: 36.68 dB
+  Mean: 136.16
+  Std Dev: 1.99
+  Min: 121.00
+  Max: 139.00
+Gray:
+  SNR: 18.67 dB
+  Mean: 100.39
+  Std Dev: 11.70
+  Min: 82.00
+  Max: 116.00
+Black:
+  SNR: 6.34 dB
+  Mean: 69.08
+  Std Dev: 33.29
+  Min: 22.00
+  Max: 114.00
+
+Gaussian:
+--------------------
+White:
+  SNR: 36.97 dB
+  Mean: 136.06
+  Std Dev: 1.93
+  Min: 124.00
+  Max: 139.00
+Gray:
+  SNR: 18.83 dB
+  Mean: 100.35
+  Std Dev: 11.48
+  Min: 83.00
+  Max: 116.00
+Black:
+  SNR: 6.50 dB
+  Mean: 69.07
+  Std Dev: 32.69
+  Min: 23.00
+  Max: 112.00
+
+Laplacian:
+--------------------
+White:
+  SNR: 31.79 dB
+  Mean: 149.32
+  Std Dev: 3.84
+  Min: 119.00
+  Max: 164.00
+Gray:
+  SNR: 17.93 dB
+  Mean: 109.81
+  Std Dev: 13.93
+  Min: 81.00
+  Max: 143.00
+Black:
+  SNR: 5.86 dB
+  Mean: 75.42
+  Std Dev: 38.40
+  Min: 7.00
+  Max: 151.00
+
+Test Conditions
+--------------------
+- White region coordinates: (860, 375, 100, 50)
+- Gray region coordinates: (660, 575, 100, 50)
+- Black region coordinates: (760, 775, 100, 50)
+- Analysis window size: 100x50 pixels

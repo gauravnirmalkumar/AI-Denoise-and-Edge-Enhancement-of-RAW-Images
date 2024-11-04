@@ -1,0 +1,5 @@
+Filter: AI_Denoised
+PSNR: 40.06232706465024
+SNR: 30.019707
+Edge Strength Original: 261.87627656592844
+Edge Strength Processed: 159.42479181989418
