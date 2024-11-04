@@ -107,46 +107,59 @@ Where:
 -  $R\$ is the maximum possible pixel value (255 for 8-bit grayscale).
 - $MSE\$ is the Mean Squared Error between the original and denoised images.
 
-### Gray Tones
-We will compute the SSNR for three specific gray tones:
-1. **Gray Tone 1:** (e.g., 50)
-2. **Gray Tone 2:** (e.g., 128)
-3. **Gray Tone 3:** (e.g., 200)
+# Image Filter Performance Analysis
 
-For each gray tone, we will calculate the SSNR for all the methods listed above.
+Analysis of various image filtering techniques applied to RAW image processing, comparing quality metrics and edge preservation characteristics.
 
-### Results
-| Method                     | Gray Tone 1 (50) | Gray Tone 2 (128) | Gray Tone 3 (200) |
-|----------------------------|-------------------|--------------------|--------------------|
-| Median Filter              | SSNR Value 1      | SSNR Value 2       | SSNR Value 3       |
-| Bilateral Filter           | SSNR Value 4      | SSNR Value 5       | SSNR Value 6       |
-| Gaussian Filter            | SSNR Value 7      | SSNR Value 8       | SSNR Value 9       |
-| Laplacian Filter           | SSNR Value 10     | SSNR Value 11      | SSNR Value 12      |
-| Edge Enhancement (A2)      | SSNR Value 13     | SSNR Value 14      | SSNR Value 15      |
+## Configuration
 
-## Edge Strength Calculation
-For each of the methods implemented, we will compute the edge strength based on a gradient-based approach:
+### Input Parameters
+- **Format**: Bayer 12-bits
+- **Pattern**: GRBG
+- **Resolution**: 1920x1280
 
-1. **Gradient-Based Edge Detection:**
-   - Use Sobel or Prewitt operators to calculate gradients for both the x and y directions.
-   - Compute the gradient magnitude:
-    
-   $\text{Magnitude} = \sqrt{G_x^2 + G_y^2}$
-    
-   
-   Where $\( G_x \)$ and $\( G_y \)$ are the gradients in the x and y directions, respectively.
+### Output Parameters
+- **Format**: RGB channel
+- **Bit Depth**: 24-bit (8 bits per channel)
 
-2. **Compute Edge Strength for Each Method:**
-   - Calculate the average gradient magnitude across the image for each method.
+### Tools Used
+- PixelViewer
+- Irfanview with RAW plugin
+- Tensorflow (CNN-based denoising)
 
-### Results of Edge Strength Calculation
-| Method                     | Edge Strength (Gradient Magnitude) |
-|----------------------------|-------------------------------------|
-| Median Filter              | Edge Strength 1                     |
-| Bilateral Filter           | Edge Strength 2                     |
-| Gaussian Filter            | Edge Strength 3                     |
-| Laplacian Filter           | Edge Strength 4                     |
-| Edge Enhancement (A2)      | Edge Strength 5                     |
+## Performance Metrics
+
+| Filter Type | PSNR (dB) | SNR (dB) | Edge Strength (Original) | Edge Strength (Processed) |
+|-------------|:---------:|:--------:|:----------------------:|:-----------------------:|
+| Median      | 42.31     | 32.26    | 261.88                | 211.09                 |
+| AI Denoised | 40.06     | 30.02    | 261.88                | 159.42                 |
+| Gaussian    | 38.98     | 28.94    | 261.88                | 178.64                 |
+| Bilateral   | 37.92     | 27.88    | 261.88                | 145.96                 |
+| Laplacian   | 28.39     | 18.35    | 261.88                | 477.54                 |
+
+## Key Findings
+
+### Filter Rankings (by PSNR)
+1. Median Filter: 42.31 dB
+2. AI Denoised: 40.06 dB
+3. Gaussian: 38.98 dB
+4. Bilateral: 37.92 dB
+5. Laplacian: 28.39 dB
+
+### Edge Preservation Analysis
+- **Best Edge Retention**: Median Filter (211.09)
+- **Strongest Edge Enhancement**: Laplacian (477.54)
+- **Most Edge Smoothing**: Bilateral (145.96)
+
+### Notable Observations
+- Median filtering provides the best balance between noise reduction and edge preservation
+- AI-based denoising shows promising results with second-best PSNR performance
+- Laplacian filter significantly amplifies edges but introduces noise (lowest PSNR)
+
+## Model Information
+- Framework: Tensorflow
+- Architecture: CNN-based denoising
+- Implementation: Pre-trained model
 
 ## License
 This project is licensed under the MIT License.
