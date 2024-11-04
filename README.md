@@ -35,11 +35,7 @@ This repository contains the implementation of various image denoising and enhan
 To get a local copy of this project up and running, follow these steps:
 
 1. **Clone the repository:**
-   ```bash
-   cd C:/type/path/here
-   git clone https://github.com/gauravnirmalkumar/AIDenoisingAndEdgeEnhancement.git
-   cd AIDenoisingAndEdgeEnhancement
-   ```
+
 2. **Set up a virtual environment:** (Recommended: [Anaconda](https://www.anaconda.com/))
    ```bash
    conda create --name myenv
