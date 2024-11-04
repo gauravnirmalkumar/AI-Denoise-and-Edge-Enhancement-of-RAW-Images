@@ -1,0 +1,5 @@
+Filter: Median
+PSNR: 42.305389590482825
+SNR: 32.26277
+Edge Strength Original: 261.87627656592844
+Edge Strength Processed: 211.087424081857

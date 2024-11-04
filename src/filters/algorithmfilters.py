@@ -1,63 +1,98 @@
+# bilateral_filter.py
 import numpy as np
 import cv2
 
-def apply_bilateral_filter(image: np.ndarray, d: int = 9, sigma_color: float = 75, sigma_space: float = 75) -> np.ndarray:
+def apply_bilateral_filter(image: np.ndarray, diameter=9, sigma_color=75, sigma_space=75) -> np.ndarray:
     """
-    Apply bilateral filter using OpenCV's optimized function.
-    Ensure output remains in high bit-depth format.
+    Apply bilateral filter to image.
     """
-    # Ensure image is in 16-bit for the bilateral filter
-    if image.dtype == np.uint16:
-        # Convert to float for processing
-        image_float = image.astype(np.float32) / 65535.0
-    else:
-        image_float = np.clip(image * 65535, 0, 65535).astype(np.uint16)
-
-    output = cv2.bilateralFilter(
-        image_float,
-        d=d,  # Diameter of each pixel neighborhood
-        sigmaColor=sigma_color,  # Filter sigma in the color space
-        sigmaSpace=sigma_space  # Filter sigma in the coordinate space
-    )
+    # Ensure image is in uint8 format
+    if image.dtype != np.uint8:
+        image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
     
-    return output.astype(np.float32)  # Output remains as float in the range [0, 1]
+    return cv2.bilateralFilter(image, diameter, sigma_color, sigma_space)
 
+# gaussian_filter.py
+def apply_gaussian_filter(image: np.ndarray, kernel_size=5, sigma=1.5) -> np.ndarray:
+    """
+    Apply Gaussian filter to image.
+    """
+    # Ensure image is in uint8 format
+    if image.dtype != np.uint8:
+        image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
     
-    return output.astype(np.float32) / 65535 
+    return cv2.GaussianBlur(image, (kernel_size, kernel_size), sigma)
 
-def apply_gaussian_filter(image: np.ndarray, kernel_size: int = 5, sigma: float = 1.5) -> np.ndarray:
+
+# median_filter.py
+def apply_median_filter(image: np.ndarray, kernel_size=3) -> np.ndarray:
     """
-    Apply Gaussian filter using OpenCV while preserving high bit-depth.
+    Apply median filter to image.
     """
-    return cv2.GaussianBlur(image.astype(np.float32), (kernel_size, kernel_size), sigma)
+    # Ensure image is in uint8 format
+    if image.dtype != np.uint8:
+        image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    
+    return cv2.medianBlur(image, kernel_size)
 
-def apply_median_filter(image: np.ndarray, kernel_size: int = 3) -> np.ndarray:
-    """
-    Apply median filter using OpenCV while preserving high bit-depth.
-    """
-    kernel_size = max(3, kernel_size + (kernel_size + 1) % 2)  # Ensure kernel size is odd
-    # Ensure the image is in a suitable format
-    return cv2.medianBlur(image.astype(np.uint16), kernel_size)
-
-
-
+# laplacian_filter.py
 def apply_laplacian_filter(image: np.ndarray) -> np.ndarray:
-    """Apply a Laplacian filter to enhance edges using OpenCV."""
-    # Apply GaussianBlur to reduce noise before Laplacian
-    blurred_image = cv2.GaussianBlur(image.astype(np.float32), (3, 3), 0)
-    laplacian_image = cv2.Laplacian(blurred_image, cv2.CV_64F)
-    return cv2.convertScaleAbs(laplacian_image)
+    """
+    Apply Laplacian filter for edge enhancement while preserving the original image content.
+    
+    Args:
+        image (np.ndarray): Input image in BGR format
+        
+    Returns:
+        np.ndarray: Edge-enhanced image
+    """
+    # Ensure image is in uint8 format
+    if image.dtype != np.uint8:
+        image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    
+    # Convert to float32 for processing
+    image_float = image.astype(np.float32) / 255.0
+    
+    # Process each channel separately
+    channels = cv2.split(image_float)
+    enhanced_channels = []
+    
+    for channel in channels:
+        # Apply Gaussian blur to reduce noise (smaller kernel for better detail preservation)
+        blurred = cv2.GaussianBlur(channel, (3, 3), 0.5)
+        
+        # Apply Laplacian with a smaller kernel size
+        laplacian = cv2.Laplacian(blurred, cv2.CV_32F, ksize=1)
+        
+        # Enhance edges by subtracting Laplacian from original
+        # (subtracting because Laplacian highlights edges with both positive and negative values)
+        enhanced = channel - laplacian
+        
+        # Normalize to [0, 1] range
+        enhanced = np.clip(enhanced, 0, 1)
+        
+        enhanced_channels.append(enhanced)
+    
+    # Merge channels back together
+    enhanced_image = cv2.merge(enhanced_channels)
+    
+    # Convert back to uint8
+    enhanced_image = (enhanced_image * 255).astype(np.uint8)
+    
+    # Apply subtle contrast enhancement
+    enhanced_image = cv2.convertScaleAbs(enhanced_image, alpha=1.1, beta=0)
+    
+    return enhanced_image
 
 def save_as_png(image: np.ndarray, filepath: str):
     """
-    Save the high-bit image as a PNG file.
-    Ensure no data is lost by saving as 16-bit or higher.
+    Save image as PNG file.
     """
-    # Normalize to 0-65535 range if necessary
-    if image.dtype == np.float32:
-        image = np.clip(image * 65535, 0, 65535).astype(np.uint16)  # Convert to 16-bit unsigned int
-
-    cv2.imwrite(filepath, image, [cv2.IMWRITE_PNG_COMPRESSION, 0])  # Save without compression
+    # Ensure image is in uint8 format
+    if image.dtype != np.uint8:
+        image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    
+    cv2.imwrite(filepath, image, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
 def compute_snr(original: np.ndarray, denoised: np.ndarray) -> float:
     noise = original.astype(np.float32) - denoised.astype(np.float32)

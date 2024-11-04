@@ -1,0 +1,5 @@
+Filter: Bilateral
+PSNR: 37.91796953090542
+SNR: 27.87535
+Edge Strength Original: 261.87627656592844
+Edge Strength Processed: 145.95559203955386

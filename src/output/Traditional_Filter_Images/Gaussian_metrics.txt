@@ -1,0 +1,5 @@
+Filter: Gaussian
+PSNR: 38.97960482419877
+SNR: 28.936987
+Edge Strength Original: 261.87627656592844
+Edge Strength Processed: 178.63998689155204
