@@ -77,6 +77,10 @@ Below are some examples of the denoising results achieved with this project.
 ###### Gaussian filter (Implemented in Assignment 1):
 ![gaussian_filtered](https://github.com/user-attachments/assets/2282ab21-2753-4f7b-853a-d548009f07c8)
 
+###### Laplacian filter
+![Laplacian_20241105_000209](https://github.com/user-attachments/assets/5ff2c7a8-ec65-4c37-92d5-6cec032a7c53)
+
+
 ###### Median filter:
 ![median_filtered](https://github.com/user-attachments/assets/7c123fc1-935f-4cb5-b88c-bf85a4610ec3)
 
