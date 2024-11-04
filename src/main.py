@@ -7,7 +7,7 @@ import multiprocessing
 from tqdm import tqdm
 import time
 from datetime import datetime
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict,List
 from ai_model.model import RDUNet 
 from filters.algorithmfilters import (
     apply_bilateral_filter, 
@@ -135,7 +135,103 @@ def display_and_store_results(original: np.ndarray, processed: np.ndarray,
     metrics_file = os.path.join(output_folder, filter_name+"_metrics.txt")
     save_metrics_to_file(metrics, metrics_file)
     print("Metrics saved for"+filter_name+":"+metrics_file)
+def compute_region_snr(image: np.ndarray, region: Tuple[int, int, int, int], 
+                      gray_level: str) -> float:
+    """
+    Compute SNR for a specific region of the image.
+    
+    Args:
+        image: Input image array
+        region: Tuple of (x, y, width, height) defining the region
+        gray_level: String identifier for the gray level being measured
+    
+    Returns:
+        float: SNR value for the region
+    """
+    x, y, w, h = region
+    roi = image[y:y+h, x:x+w]
+    
+    # Convert to grayscale if image is RGB
+    if len(roi.shape) == 3:
+        roi = cv2.cvtColor(roi, cv2.COLOR_RGB2GRAY)
+    
+    # Compute mean signal level
+    signal_mean = np.mean(roi)
+    
+    # Compute noise as standard deviation
+    noise_std = np.std(roi)
+    
+    # Avoid division by zero
+    if noise_std == 0:
+        return float('inf')
+    
+    snr = 20 * np.log10(signal_mean / noise_std)
+    return snr
 
+def analyze_gray_tones(original_image: np.ndarray, 
+                      processed_images: Dict[str, np.ndarray],
+                      regions: List[Tuple[int, int, int, int]],
+                      gray_levels: List[str]) -> Dict[str, Dict[str, float]]:
+    """
+    Analyze SNR for multiple gray tone regions across different processing methods.
+    
+    Args:
+        original_image: Original input image
+        processed_images: Dictionary of processed images with method names as keys
+        regions: List of regions (x, y, width, height) for each gray tone
+        gray_levels: List of gray level identifiers
+        
+    Returns:
+        Dictionary containing SNR values for each method and region
+    """
+    results = {}
+    
+    # Analyze original image
+    results['Original'] = {}
+    for region, gray_level in zip(regions, gray_levels):
+        results['Original'][gray_level] = compute_region_snr(
+            original_image, region, gray_level)
+    
+    # Analyze processed images
+    for method_name, processed_image in processed_images.items():
+        results[method_name] = {}
+        for region, gray_level in zip(regions, gray_levels):
+            results[method_name][gray_level] = compute_region_snr(
+                processed_image, region, gray_level)
+    
+    return results
+
+def save_gray_tone_analysis(results: Dict[str, Dict[str, float]], 
+                          output_path: str):
+    """
+    Save gray tone analysis results to a file.
+    
+    Args:
+        results: Dictionary containing SNR results
+        output_path: Path to save the results
+    """
+    with open(output_path, 'w') as f:
+        f.write("Gray Tone SNR Analysis Report\n")
+        f.write("============================\n\n")
+        
+        # Get all methods and gray levels
+        methods = list(results.keys())
+        gray_levels = list(results[methods[0]].keys())
+        
+        # Write header
+        f.write(f"{'Method':<15}")
+        for gray_level in gray_levels:
+            f.write(f"{gray_level:<15}")
+        f.write("\n")
+        f.write("-" * (15 + 15 * len(gray_levels)) + "\n")
+        
+        # Write results for each method
+        for method in methods:
+            f.write(f"{method:<15}")
+            for gray_level in gray_levels:
+                snr = results[method][gray_level]
+                f.write(f"{snr:14.2f} ")
+            f.write("\n")
 def save_summary_report(summary: list, report_path: str):
     """Generate and save comprehensive comparison report."""
     with open(report_path, 'w') as report_file:
@@ -147,7 +243,133 @@ def save_summary_report(summary: list, report_path: str):
             report_file.write("Edge Strength Original: " + str(round(metrics["Edge Strength Original"], 2)) + "\n")
             report_file.write("Edge Strength Processed: " + str(round(metrics["Edge Strength Processed"], 2)) + "\n\n")
     print("Summary report saved at",report_path)
+def save_detailed_snr_report(results: Dict[str, Dict[str, Dict[str, float]]], 
+                           timestamp: str,
+                           output_path: str):
+    """
+    Save a detailed SNR analysis report including timestamp and method comparisons.
+    
+    Args:
+        results: Nested dictionary containing analysis results for each method and region
+        timestamp: Timestamp string for the report
+        output_path: Path to save the report
+    """
+    with open(output_path, 'w') as f:
+        f.write(f"Detailed Gray Tone SNR Analysis Report\n")
+        f.write(f"Generated: {timestamp}\n")
+        f.write("=" * 50 + "\n\n")
+        
+        # Get all methods and gray levels
+        methods = list(results.keys())
+        gray_levels = list(results[methods[0]].keys())
+        
+        # Table header
+        f.write(f"{'Method':<20}")
+        for gray_level in gray_levels:
+            f.write(f"{gray_level + ' SNR':<15}")
+        f.write("Average SNR\n")
+        f.write("-" * 65 + "\n")
+        
+        # Results for each method
+        best_method = {"name": "", "avg_snr": float('-inf')}
+        for method in methods:
+            f.write(f"{method:<20}")
+            snr_values = []
+            for gray_level in gray_levels:
+                snr = results[method][gray_level]['snr']  # Access SNR from metrics dictionary
+                snr_values.append(snr)
+                f.write(f"{snr:14.2f} ")
+            avg_snr = sum(snr_values) / len(snr_values)
+            f.write(f"{avg_snr:14.2f}\n")
+            
+            # Track best performing method
+            if avg_snr > best_method["avg_snr"]:
+                best_method["name"] = method
+                best_method["avg_snr"] = avg_snr
+        
+        # Analysis summary
+        f.write("\nAnalysis Summary\n")
+        f.write("-" * 20 + "\n")
+        f.write(f"Best performing method: {best_method['name']}\n")
+        f.write(f"Best average SNR: {best_method['avg_snr']:.2f} dB\n\n")
+        
+        # Detailed metrics for each method and region
+        f.write("\nDetailed Metrics by Region\n")
+        f.write("=" * 50 + "\n")
+        
+        for method in methods:
+            f.write(f"\n{method}:\n")
+            f.write("-" * 20 + "\n")
+            for gray_level in gray_levels:
+                metrics = results[method][gray_level]
+                f.write(f"{gray_level}:\n")
+                f.write(f"  SNR: {metrics['snr']:.2f} dB\n")
+                f.write(f"  Mean: {metrics['mean']:.2f}\n")
+                f.write(f"  Std Dev: {metrics['std']:.2f}\n")
+                f.write(f"  Min: {metrics['min']:.2f}\n")
+                f.write(f"  Max: {metrics['max']:.2f}\n")
+        
+        # Test conditions
+        f.write("\nTest Conditions\n")
+        f.write("-" * 20 + "\n")
+        f.write("- White region coordinates: (860, 375, 100, 50)\n")
+        f.write("- Gray region coordinates: (660, 575, 100, 50)\n")
+        f.write("- Black region coordinates: (760, 775, 100, 50)\n")
+        f.write("- Analysis window size: 100x50 pixels\n")
+def compute_region_snr_advanced(image: np.ndarray, 
+                              region: Tuple[int, int, int, int]) -> Dict[str, float]:
+    """
+    Compute advanced SNR metrics for a specific region.
+    """
+    x, y, w, h = region
+    roi = image[y:y+h, x:x+w]
+    
+    # Convert to grayscale if needed
+    if len(roi.shape) == 3:
+        roi = cv2.cvtColor(roi, cv2.COLOR_RGB2GRAY)
+    
+    # Basic SNR calculation
+    signal_mean = np.mean(roi)
+    noise_std = np.std(roi)
+    snr = 20 * np.log10(signal_mean / noise_std) if noise_std > 0 else float('inf')
+    
+    # Additional metrics
+    metrics = {
+        'snr': snr,
+        'mean': signal_mean,
+        'std': noise_std,
+        'min': np.min(roi),
+        'max': np.max(roi)
+    }
+    
+    return metrics
 
+def analyze_gray_tones_advanced(image: np.ndarray, 
+                              processed_images: Dict[str, np.ndarray]) -> Dict[str, Dict[str, Dict[str, float]]]:
+    """
+    Perform advanced analysis of gray tone regions.
+    """
+    # Define regions based on provided coordinates
+    regions = {
+        'White': (860, 375, 100, 50),  # Centered around 910,400
+        'Gray': (660, 575, 100, 50),   # Centered around 710,600
+        'Black': (760, 775, 100, 50)   # Centered around 810,800
+    }
+    
+    results = {}
+    
+    # Analyze original image
+    results['Original'] = {}
+    for tone, region in regions.items():
+        results['Original'][tone] = compute_region_snr_advanced(image, region)
+    
+    # Analyze processed images
+    for method, processed in processed_images.items():
+        results[method] = {}
+        for tone, region in regions.items():
+            results[method][tone] = compute_region_snr_advanced(processed, region)
+    
+    return results
 def main():
     try:
         # Initialize settings and paths
@@ -155,22 +377,24 @@ def main():
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         # Configure paths
-        input_file = "D:\\assignment2\\data\\eSFR_1920x1280_12b_GRGB_6500K_60Lux.raw"
-        model_path = 'ai_model/model_color/model_color.pth'
-        output_folder = "output"
+        input_file = "..\\data\\eSFR_1920x1280_12b_GRGB_6500K_60Lux.raw"
+        model_path = '..\\src\\ai_model\\model_color\\model_color.pth'
+        output_folder = f"output_{timestamp}"
         denoised_folder = os.path.join(output_folder, "AI_Denoised_Images")
         traditional_folder = os.path.join(output_folder, "Traditional_Filter_Images")
+        reports_folder = os.path.join(output_folder, "Analysis_Reports")
         
         # Create output directories
-        os.makedirs(denoised_folder, exist_ok=True)
-        os.makedirs(traditional_folder, exist_ok=True)
+        for folder in [denoised_folder, traditional_folder, reports_folder]:
+            os.makedirs(folder, exist_ok=True)
         
         # Load and process input image
+        print("Loading input image...")
         input_image = load_bayer_raw_image(input_file)
         if input_image is None:
             raise ValueError("Failed to load input image")
             
-        # Load AI model and apply denoising
+        # Load and apply AI model
         print("Loading AI model...")
         model = load_pytorch_model(model_path)
         
@@ -183,47 +407,58 @@ def main():
         )
         
         # Save AI-denoised result
-        save_as_png(denoised_image, 
-                   os.path.join(denoised_folder, "AI_Denoised_"+timestamp+".png"))
+        ai_output_path = os.path.join(denoised_folder, f"AI_Denoised_{timestamp}.png")
+        save_as_png(denoised_image, ai_output_path)
+        print(f"AI-denoised image saved: {ai_output_path}")
         
         # Apply traditional filters
         print("Applying traditional filters...")
-        bilateral_image = apply_bilateral_filter(input_image)
-        median_image = apply_median_filter(input_image)
-        gaussian_image = apply_gaussian_filter(input_image)
-        laplacian_image = apply_laplacian_filter(input_image)
+        processed_images = {
+            "AI_Denoised": denoised_image,
+            "Bilateral": apply_bilateral_filter(input_image),
+            "Median": apply_median_filter(input_image),
+            "Gaussian": apply_gaussian_filter(input_image),
+            "Laplacian": apply_laplacian_filter(input_image)
+        }
         
         # Save traditional filter results
-        save_as_png(bilateral_image, 
-                   os.path.join(traditional_folder, 'Bilateral.png'))
-        save_as_png(median_image, 
-                   os.path.join(traditional_folder, 'Median.png'))
-        save_as_png(gaussian_image, 
-                   os.path.join(traditional_folder, 'Gaussian.png'))
-        save_as_png(laplacian_image, 
-                   os.path.join(traditional_folder, 'Laplacian.png'))
+        for method, image in processed_images.items():
+            if method != "AI_Denoised":  # Already saved AI result
+                output_path = os.path.join(traditional_folder, f"{method}_{timestamp}.png")
+                save_as_png(image, output_path)
+                print(f"{method} filter result saved: {output_path}")
         
-        # Compute and save metrics
+        # Perform advanced gray tone analysis
+        print("Performing gray tone analysis...")
+        analysis_results = analyze_gray_tones_advanced(input_image, processed_images)
+        
+        # Save detailed SNR report
+        snr_report_path = os.path.join(reports_folder, f"snr_analysis_{timestamp}.txt")
+        save_detailed_snr_report(analysis_results, timestamp, snr_report_path)
+        print(f"SNR analysis report saved: {snr_report_path}")
+        
+        # Generate summary metrics
         summary = []
-        print("Computing metrics...")
-        display_and_store_results(input_image, denoised_image, 
-                                "AI Denoised", denoised_folder, summary)
-        display_and_store_results(input_image, bilateral_image, 
-                                "Bilateral", traditional_folder, summary)
-        display_and_store_results(input_image, median_image, 
-                                "Median", traditional_folder, summary)
-        display_and_store_results(input_image, gaussian_image, 
-                                "Gaussian", traditional_folder, summary)
-        display_and_store_results(input_image, laplacian_image, 
-                                "Laplacian", traditional_folder, summary)
+        for method, image in processed_images.items():
+            display_and_store_results(
+                input_image, 
+                image, 
+                method, 
+                reports_folder if method == "AI_Denoised" else traditional_folder,
+                summary
+            )
         
-        # Save final report
-        summary_report_path = os.path.join(output_folder, "filter_comparison_report.txt")
+        # Save final summary report
+        summary_report_path = os.path.join(reports_folder, f"filter_comparison_{timestamp}.txt")
         save_summary_report(summary, summary_report_path)
-        print("Processing complete!")
+        print(f"Summary report saved: {summary_report_path}")
+        
+        print("\nProcessing complete!")
+        print(f"All results saved in: {output_folder}")
         
     except Exception as e:
-        print("An error occurred in main():", str(e))
+        print(f"An error occurred in main(): {str(e)}")
+        raise
 
 if __name__ == "__main__":
     main()
